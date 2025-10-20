@@ -1,5 +1,4 @@
 import cv2
-import matplotlib.pyplot as plt
 
 def apply_color(image, color_filter):
     filter_image = image.copy()
@@ -16,12 +15,14 @@ def apply_color(image, color_filter):
         gray_image = cv2.cvtColor(filter_image,cv2.COLOR_BGR2GRAY)
         sobelx = cv2.Sobel(gray_image,cv2.CV_64F,1,0,ksize=3)
         sobely = cv2.Sobel(gray_image,cv2.CV_64F,0,1,ksize=3)
-        combined_sobel = cv2.bitwise_or(sobelx.astype("uint8"),sobely.astype("unit8"))
+        combined_sobel = cv2.bitwise_or(sobelx.astype("uint8"),sobely.astype("uint8"))
         filter_image = cv2.cvtColor(combined_sobel,cv2.COLOR_GRAY2BGR)
     elif color_filter == "canny":
         gray_image = cv2.cvtColor(filter_image,cv2.COLOR_BGR2GRAY)
         edges = cv2.Canny(gray_image,100,200)
         filter_image = cv2.cvtColor(edges,cv2.COLOR_GRAY2BGR)
+    elif filter_type == "original":
+        pass
     return filter_image
 capture = cv2.VideoCapture(0)
 filter_type = "original"
@@ -30,12 +31,13 @@ if not capture.isOpened():
     exit()
 while True:
     ret,frame = capture.read()
+    print(ret)
     if not ret:
         break
     filter_image = apply_color(frame,filter_type)
     cv2.imshow(filter_type,filter_image)
     print("Press the key (r) for a red tint. \n Press the key (b) for a blue tint. \n Press the key (g) for a green tint. \n Press the key (q) to quit the program.")
-    key = cv2.waitKey(0) & 0xFF 
+    key = cv2.waitKey(1) & 0xFF 
     if key == ord("r"):
         filter_type = "red_tint"
     elif key == ord("g"):
@@ -52,4 +54,3 @@ while True:
         print("Invalid key press either R,G,B,S,C,Q")
 capture.release()
 cv2.destroyAllWindows()
-        
